@@ -7,3 +7,5 @@ src/setup/
 !/anchor/src/
 !/anchor/target/idl/
 !/anchor/target/types/
+
+!/src/setup/data/
