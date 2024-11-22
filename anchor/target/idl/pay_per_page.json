@@ -1,0 +1,401 @@
+{
+  "address": "FLdJRxLbgC6Qj4V9nWeEqjjw9dHVxmvTjqYkb24Wjx89",
+  "metadata": {
+    "name": "pay_per_page",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "buy_content_account",
+      "discriminator": [
+        245,
+        217,
+        97,
+        130,
+        53,
+        213,
+        32,
+        101
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "content_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  116,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "content_account.name [.. content_account.name_length as usize]",
+                "account": "ContentAccount"
+              },
+              {
+                "kind": "account",
+                "path": "content_account.authority",
+                "account": "ContentAccount"
+              }
+            ]
+          }
+        },
+        {
+          "name": "content_pay_user_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  116,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116,
+                  95,
+                  117,
+                  115,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "content_account"
+              },
+              {
+                "kind": "account",
+                "path": "payer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "greet",
+      "discriminator": [
+        203,
+        194,
+        3,
+        150,
+        228,
+        58,
+        181,
+        62
+      ],
+      "accounts": [],
+      "args": []
+    },
+    {
+      "name": "init_content_account",
+      "discriminator": [
+        69,
+        109,
+        156,
+        8,
+        50,
+        17,
+        70,
+        63
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "content_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  116,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "name"
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "duration",
+          "type": "u64"
+        },
+        {
+          "name": "cost",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "init_content_state",
+      "discriminator": [
+        199,
+        213,
+        56,
+        141,
+        134,
+        102,
+        40,
+        8
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "content_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  116,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "content_account.name [.. content_account.name_length as usize]",
+                "account": "ContentAccount"
+              },
+              {
+                "kind": "account",
+                "path": "content_account.authority",
+                "account": "ContentAccount"
+              }
+            ]
+          }
+        },
+        {
+          "name": "content_pay_user_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  116,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116,
+                  95,
+                  117,
+                  115,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "content_account"
+              },
+              {
+                "kind": "account",
+                "path": "payer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "ContentAccount",
+      "discriminator": [
+        189,
+        25,
+        152,
+        128,
+        54,
+        178,
+        15,
+        232
+      ]
+    },
+    {
+      "name": "ContentUserState",
+      "discriminator": [
+        218,
+        239,
+        99,
+        100,
+        125,
+        221,
+        199,
+        247
+      ]
+    }
+  ],
+  "types": [
+    {
+      "name": "ContentAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "name",
+            "type": {
+              "array": [
+                "u8",
+                250
+              ]
+            }
+          },
+          {
+            "name": "name_length",
+            "type": "u16"
+          },
+          {
+            "name": "cost",
+            "type": "u64"
+          },
+          {
+            "name": "duration",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ContentUserState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "content_account",
+            "type": "pubkey"
+          },
+          {
+            "name": "time",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ]
+}
