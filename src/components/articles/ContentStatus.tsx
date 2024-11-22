@@ -1,6 +1,6 @@
 'use client'
 
-import { ContentStatusEnum } from '@/app/articles/[article]/page';
+
 import Time from '../ui/time';
 import { useEffect, useState, useRef } from 'react';
 
@@ -170,3 +170,13 @@ export default function ContentStatus({
     </div>
   );
 }
+
+
+
+const enum ContentStatusEnum {
+    NO_ACCESS = "NO_ACCESS",
+    ACCESSIBLE = "ACCESSIBLE",
+    EXPIRED = "EXPIRED"
+}
+
+export {ContentStatusEnum}

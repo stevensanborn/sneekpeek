@@ -11,17 +11,12 @@ import { CONTENT_ACCOUNT_AUTHORITY_ID, getContentAddress, getContentUserAddress,
 import Price from "@/components/ui/price"
 import Time from "@/components/ui/time"
 import {CircleX,LoaderCircle} from 'lucide-react'
+import {ContentStatusEnum} from "@/components/articles/ContentStatus"
 
 type Article = {
     title: string | null;
     synopsis: string | null;
     body: string | null;
-}
-
-const enum ContentStatusEnum {
-    NO_ACCESS = "NO_ACCESS",
-    ACCESSIBLE = "ACCESSIBLE",
-    EXPIRED = "EXPIRED"
 }
 
 const enum transactionStatusEnum {

@@ -34,7 +34,7 @@ function getContentAddress(name: string, signer: PublicKey, programID: PublicKey
         }
     })
     ws.addEventListener('message', (message)=>{
-        console.log("WebSocket message received", message)
+        // console.log("WebSocket message received", message)
         if(onmessage){
             onmessage(message)
         }
