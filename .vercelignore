@@ -1,3 +1,9 @@
 anchor/
 anchorProject/
 src/setup/
+
+
+
+!/anchor/src/
+!/anchor/target/idl/
+!/anchor/target/types/
