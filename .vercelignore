@@ -9,3 +9,6 @@
 # !/anchor/target/types/
 
 # !/src/setup/data/
+
+src/setup/seed_articles.ts
+src/setup/generator.mjs
