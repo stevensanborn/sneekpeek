@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 const getArticles = async () => {
-    console.log("getting articles", process.env.URL)
+    console.log("getting articles ", `https://${process.env.URL}/api/articles/`)
     try{
         const articles = await fetch(`https://${process.env.URL}/api/articles/`,{cache: 'no-store' })
         return articles.json()
