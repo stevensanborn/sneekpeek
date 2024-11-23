@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 const getArticles = async () => {
     console.log("getting articles", process.env.URL)
     try{
-        const articles = await fetch(`${process.env.URL}/api/articles/`,{cache: 'no-store' })
+        const articles = await fetch(`https://${process.env.URL}/api/articles/`,{cache: 'no-store' })
         return articles.json()
     }catch(error){
         console.error("Error getting articles", error)
