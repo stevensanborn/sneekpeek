@@ -1,18 +1,21 @@
 import { NextResponse } from 'next/server'
 
-const getArticles = async () => {
-    console.log("getting articles ", `https://${process.env.URL}/api/articles/`)
-    try{
-        const articles = await fetch(`https://${process.env.URL}/api/articles/`,{cache: 'no-store' })
-        return articles.json()
-    }catch(error){
-        console.error("Error getting articles", error)
-        return []
-    }
-}
+// const getArticles = async () => {
+    
+//     console.log("getting articles ", `https://${process.env.URL}/api/articles/`)
+//     try{
+//         // const articles = await fetch(`https://${process.env.URL}/api/articles/`,{cache: 'no-store' })
+//         let data = require('../../../setup/data/articles.json');
+    
+//         return data.json()
+//     }catch(error){
+//         console.error("Error getting articles", error)
+//         return []
+//     }
+// }
 
 export async function GET(request: Request) {
-    let articles = await getArticles()
+    let articles =  require('../../../setup/data/articles.json')
 
     const url = new URL(request.url)
     const articleId = url.searchParams.get('article')
