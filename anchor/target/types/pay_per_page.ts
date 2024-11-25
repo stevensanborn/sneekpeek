@@ -341,6 +341,18 @@ export type PayPerPage = {
       ]
     }
   ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "nameTooLong",
+      "msg": "Cannot initialize, name too long"
+    },
+    {
+      "code": 6001,
+      "name": "costTooLow",
+      "msg": "Cannot initialize, cost too low"
+    }
+  ],
   "types": [
     {
       "name": "contentAccount",
@@ -356,7 +368,7 @@ export type PayPerPage = {
             "type": {
               "array": [
                 "u8",
-                250
+                32
               ]
             }
           },

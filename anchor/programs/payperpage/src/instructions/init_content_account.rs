@@ -1,16 +1,33 @@
 use anchor_lang::prelude::*;
 use crate::states::*;
 use crate::states::ContentAccount;
+use crate::errors::PayperpageError;
+
 
 pub fn initialize_content_account(ctx: Context<InitializeContentAccount>, name: String, duration: u64, cost: u64) -> Result<()> {
+
+    msg!("name length: {}", name.chars().count());
+    if name.chars().count() > NAME_LENGTH {
+        msg!("Name too long");
+        return err!(PayperpageError::NameTooLong);
+    }
+    
+    //check if the cost is too low
+    require!(
+        cost >= COST_MIN,
+        PayperpageError::CostTooLow
+    );
 
     //save the name
     let mut data_name = [0u8; NAME_LENGTH]; //initialize array with 0s
     data_name[..name.as_bytes().len()].copy_from_slice(name.as_bytes());
     ctx.accounts.content_account.name = data_name;
     ctx.accounts.content_account.name_length = name.as_bytes().len() as u16;
+
+
     //save the cost
     ctx.accounts.content_account.cost = cost;
+
     //save the duration
     ctx.accounts.content_account.duration = duration;
     //save the bump

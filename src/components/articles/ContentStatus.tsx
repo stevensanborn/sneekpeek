@@ -129,26 +129,26 @@ export default function ContentStatus({
                     <circle
                       fill="none"
                       stroke="white"
-                      stroke-width="5"
-                      stroke-mitterlimit="0"
+                      strokeWidth="5"
+                      strokeMitter-limit="0"
                       cx="50"
                       cy="50"
                       r="48"
-                      stroke-dasharray="360"
-                      stroke-linecap="round"
+                      strokeDasharray="360"
+                      strokeLinecap="round"
                       transform="rotate(-90 ) translate(-100 0)"
                     ></circle>
                     <circle
                       ref={refTimerCircle}
                       fill="none"
                       stroke="blue"
-                      stroke-width="5"
-                      stroke-mitterlimit="0"
+                      strokeWidth="5"
+                      strokeMitter-limit="0"
                       cx="50"
                       cy="50"
                       r="48"
-                      stroke-dasharray="360"
-                      stroke-linecap="round"
+                      strokeDasharray="360"
+                      strokeLinecap="round"
                       transform="rotate(-90 ) translate(-100 0)"
                     ></circle>
                   </svg>
@@ -176,6 +176,8 @@ export default function ContentStatus({
 const enum ContentStatusEnum {
     NO_ACCESS = "NO_ACCESS",
     ACCESSIBLE = "ACCESSIBLE",
+    SIGNATURE_PENDING = "SIGNATURE_PENDING",
+    FINALIZED_PENDING = "FINALIZED_PENDING",
     EXPIRED = "EXPIRED"
 }
 

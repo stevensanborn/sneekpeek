@@ -6,12 +6,13 @@ import GetArticleModal from "@/components/articles/GetArticleModal"
 import ContentStatus from "@/components/articles/ContentStatus"
 import { useAnchorProvider } from "@/components/solana/solana-provider"
 import { getBasicProgram } from "@project/anchor"
-import { PublicKey,LAMPORTS_PER_SOL, SystemProgram, Transaction, VersionedTransaction } from "@solana/web3.js"
-import { CONTENT_ACCOUNT_AUTHORITY_ID, getContentAddress, getContentUserAddress, onFinalizedSignature } from "@/utils/utils"
+import { PublicKey,LAMPORTS_PER_SOL, SystemProgram, Transaction, VersionedTransaction, ComputeBudgetProgram } from "@solana/web3.js"
+import { checkSignatureComplete, checkTransactionComplete, CONTENT_ACCOUNT_AUTHORITY_ID, getContentAddress, getContentUserAddress, onFinalizedSignature } from "@/utils/utils"
 import Price from "@/components/ui/price"
 import Time from "@/components/ui/time"
 import {CircleX,LoaderCircle} from 'lucide-react'
 import {ContentStatusEnum} from "@/components/articles/ContentStatus"
+import toast, { Toaster } from "react-hot-toast"
 
 type Article = {
     title: string | null;
@@ -22,6 +23,8 @@ type Article = {
 const enum transactionStatusEnum {
     IDLE = "IDLE",
     LOADING = "LOADING",
+    SIGNATURE_PENDING = "SIGNATURE_PENDING",
+    FINALIZED_PENDING = "FINALIZED_PENDING",
     SUCCESS = "SUCCESS",
     ERROR = "ERROR"
 }
@@ -141,16 +144,20 @@ export default  function ArticlePage({params}:any) {
         console.log("pub "+publicKey!.toBase58())
         console.log("contentAccount"+contentAccountKey!.toBase58())
         console.log("contentUserAccount"+contentUserAccountKey!.toBase58())
-        
+        console.log("AUTHORITY",CONTENT_ACCOUNT_AUTHORITY_ID.toBase58())
         //initialize content user account
         if(!contentUserState){
+            console.log("Initiating User Account"  ,contentUserAccountKey)
             tx.add(await program.methods.initContentState().accountsStrict({
                 payer: publicKey!,
                 contentAccount: contentAccountKey!,
                 contentPayUserAccount: contentUserAccountKey!,
                 systemProgram: SystemProgram.programId
             }).instruction());
+
+            
         }
+        console.log("buyContentAccount")
         //buy content account
         tx.add(await program.methods.buyContentAccount().accountsStrict({
             payer: publicKey!,
@@ -159,6 +166,15 @@ export default  function ArticlePage({params}:any) {
             contentPayUserAccount: contentUserAccountKey!,
             systemProgram: SystemProgram.programId
         }).instruction());
+        // const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
+        //     units: 300,
+        //   });
+          
+        //   const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
+        //     microLamports: 20000,
+        //   });
+        //   tx.add(modifyComputeUnits)
+        //   tx.add(addPriorityFee)
         // Get latest blockhash
         const { blockhash, lastValidBlockHeight } = await provider.connection.getLatestBlockhash();
         tx.recentBlockhash = blockhash;
@@ -169,34 +185,73 @@ export default  function ArticlePage({params}:any) {
             const versionedTx = new VersionedTransaction(tx.compileMessage());
             const signedTx = await signTransaction!(versionedTx)
             // Send the transaction
+
+            
+              
             const txid = await provider.connection.sendTransaction(signedTx, {
                 maxRetries: 5,
                 skipPreflight: true,
                 preflightCommitment: 'processed'
             });
-            
+            console.log("txid",txid)
 
-            provider.connection.onSignature(txid, (signatureInfo, context)=>{
-                console.log("signatureInfo", signatureInfo)
-                if(signatureInfo.err){
-                    setTransactionStatus(transactionStatusEnum.ERROR)
-                }
+            // provider.connection.onSignature(txid, (signatureInfo, context)=>{
+            //     console.log("signatureInfo", signatureInfo)
+            //     if(signatureInfo.err){
+            //         setTransactionStatus(transactionStatusEnum.ERROR)
+            //     }
                 
-            })
+            // })
             //subscribe to signature
-            onFinalizedSignature(txid,provider.connection.rpcEndpoint,(result:any)=>{
-                console.log("result", result)
-                if(result.result.event === 'message'){
-                    console.log("success",result.result.message)
-                    setTransactionStatus(transactionStatusEnum.SUCCESS)
-                    setCheckAccess(!checkAccess) //trigger check access
-                }
-                if(result.result.event === 'error'){
-                    console.log("error",result.result.error)
+            // onFinalizedSignature(txid,provider.connection.rpcEndpoint,(result:any)=>{
+            //     console.log("result", result)
+            //     if(result.result.event === 'message'){
+            //         console.log("success",result.result.message)
+            //         setTransactionStatus(transactionStatusEnum.SUCCESS)
+            //         setCheckAccess(!checkAccess) //trigger check access
+            //     }
+            //     if(result.result.event === 'error'){
+            //         console.log("error",result.result.error)
+            //         setTransactionStatus(transactionStatusEnum.ERROR)
+            //     }
+            // })
+            //get signature status
+            try{
+                let error = false
+                setTransactionStatus(transactionStatusEnum.SIGNATURE_PENDING)
+                await checkSignatureComplete(txid,provider.connection).catch((e:any)=>{
+                    console.log(e)
+                    error=true
                     setTransactionStatus(transactionStatusEnum.ERROR)
+                    toast.error("Transaction failed! ", e)
+                })
+                if(!error){
+                setTransactionStatus(transactionStatusEnum.SIGNATURE_PENDING)
+                checkSignatureComplete(txid,provider.connection).then((result:any)=>{
+                console.log("result", result)
+                if(result){
+                    setTransactionStatus(transactionStatusEnum.SUCCESS)
+                    toast.success("Transaction successful! "+txid)
+                    setCheckAccess(!checkAccess) //trigger check access
+                    }
+                }).catch((e:any)=>{
+                    console.log(e)
+                    toast.error("Transaction failed! "+e)
+                    setTransactionStatus(transactionStatusEnum.ERROR)
+                    })
                 }
-            })
-            
+            }catch(e){
+                setTransactionStatus(transactionStatusEnum.ERROR)
+                toast.error("Transaction failed! "+e)
+                console.log(e)
+            }
+            // provider.connection.getTransaction(txid,{maxSupportedTransactionVersion:0}).then((result:any)=>{
+            //     console.log("result", result)
+            //     if(result.meta.status.Ok){
+            //         setTransactionStatus(transactionStatusEnum.SUCCESS)
+            //         setCheckAccess(!checkAccess) //trigger check access
+            //     }
+            // })
             // setTimeout(()=>{
             //     setTransactionStatus(transactionStatusEnum.SUCCESS)
             //     setCheckAccess(!checkAccess) //trigger check access
@@ -204,7 +259,7 @@ export default  function ArticlePage({params}:any) {
         } catch (error) {
             
             setTransactionStatus(transactionStatusEnum.IDLE)
-
+            toast.error("Transaction failed! "+error)
             console.error("Error sending transaction:", error);
             if (error instanceof Error) {
                 // @ts-ignore - getLogs() might exist on the error
@@ -249,10 +304,12 @@ export default  function ArticlePage({params}:any) {
                         } className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md whitespace-nowrap inline">
 
                             {
-                            transactionStatus === transactionStatusEnum.LOADING && <LoaderCircle size={20} className="animate-spin mr-2 inline" />
-                            
+                            (transactionStatus === transactionStatusEnum.LOADING || transactionStatus === transactionStatusEnum.SIGNATURE_PENDING || transactionStatus === transactionStatusEnum.FINALIZED_PENDING) && <LoaderCircle size={20} className="animate-spin mr-2 inline" />
                             }
-                            Get Access ,  <Price sol={articleInfo?.cost.toNumber()/LAMPORTS_PER_SOL} />
+                            {transactionStatus === transactionStatusEnum.SIGNATURE_PENDING && "Signing..."}
+                            {transactionStatus === transactionStatusEnum.FINALIZED_PENDING && "Finalizing..."}
+                            {transactionStatus !== transactionStatusEnum.SIGNATURE_PENDING && transactionStatus !== transactionStatusEnum.FINALIZED_PENDING && "Get Access , "}
+                            <Price sol={articleInfo?.cost.toNumber()/LAMPORTS_PER_SOL} />
                             for <Time seconds={articleInfo?.duration.toNumber() ?? 0} />
                         </button>
                         )}
@@ -275,6 +332,8 @@ export default  function ArticlePage({params}:any) {
                     />
                 </div>
                 )}
+               
+            
                
             </div>  
             

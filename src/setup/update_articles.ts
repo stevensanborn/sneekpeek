@@ -137,8 +137,7 @@ articles.forEach(async (article) => {
   // } else {
   try{
     const tx = await program.methods
-    
-    .initContentAccount(article.id, new BN(360), new BN(1_000_000))
+    .upContentAccount(article.id, new BN(360), new BN(1_000_000))
       .accountsStrict({
         authority: keypairFromHex.publicKey,
         contentAccount: contentAccountKey,
@@ -150,21 +149,9 @@ articles.forEach(async (article) => {
   } catch(e){
     console.log(e,)
   }
-  // } 
+  // // }
 
 
 });
 
 
-
-
-
-/*
-
-2x-ai-revolution 4M8e7HbL4QWfuBkYAhpDLJyLWYYXfsjdUFc4LPYY9TpdzsAdzg95uA3YTKSuW4mMTrzd6k26hqUFaG3jRxCN6DRp
-4x-remote-work-culture 3AYE4VJaNuttzMRpPk4WFugfjgVZB1ucj49VNvXuLkKuFiJFLQstkv3yhr7Ff8zguzhAbe577yvSTMrmksPJGDYe
-1x-crypto-markets-2024 4p3K4NZshjoLDq2JjVamrFUETVZEWn7o2B4YjNHU2N7ip4J2YQJkp8MogMqEAb6HBSsnURcoyiJ4BroyxhrJFW3e
-3x-sustainable-tech 33u6WzkNiLsMdwuDgje87j9G9f2SPuYkvZGtYJMcnzNP77kVRmVX3HKHsWKRACHbPYVbcyhGAqH1JFeMSdvhGpz5
-
-
-*/

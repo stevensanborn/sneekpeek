@@ -1,7 +1,8 @@
 
 use anchor_lang::prelude::*;
 
-pub const NAME_LENGTH: usize = 250;
+pub const NAME_LENGTH: usize = 32;
+pub const COST_MIN: u64 = 100;
 
 #[account ]
 #[derive(InitSpace)]

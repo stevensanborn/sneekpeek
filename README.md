@@ -8,6 +8,10 @@ Sneek is a platform for to allow payments for individual pieces of content using
 In ths example we use next to host a simple web app that exposes a list of sample articles. The article ids are  stored on chain with a cost and duration.  When a user clicks on an article, they can buy access to the article and then read it. The user state is stored on chain and can be checked at any time.
 
 
+This app is deployed at https://sneekpeek.vercel.app/
+It only exists on devnet and is not available on mainnet.
+
+
 
 
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/wFAkMYEB)

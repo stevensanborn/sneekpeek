@@ -335,6 +335,18 @@
       ]
     }
   ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "NameTooLong",
+      "msg": "Cannot initialize, name too long"
+    },
+    {
+      "code": 6001,
+      "name": "CostTooLow",
+      "msg": "Cannot initialize, cost too low"
+    }
+  ],
   "types": [
     {
       "name": "ContentAccount",
@@ -350,7 +362,7 @@
             "type": {
               "array": [
                 "u8",
-                250
+                32
               ]
             }
           },

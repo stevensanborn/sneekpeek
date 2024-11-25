@@ -3,8 +3,8 @@ import { BN, Program } from '@coral-xyz/anchor';
 import { PublicKey } from '@solana/web3.js';
 import { PayPerPage } from '../target/types/pay_per_page';
 import { expect, describe, it } from '@jest/globals';
-import { getContentAddress, getContentUserAddress } from '../../src/utils/utils';
-
+import { getContentAddress, getContentUserAddress,hashName } from '../../src/utils/utils';
+import assert from 'assert';
 
 describe('basic', () => {
   // Configure the client to use the local cluster.
@@ -20,19 +20,19 @@ describe('basic', () => {
   let  contentAccountBump: number;
   let contentUserStateKey: PublicKey;
   
-  it('should run the program', async () => {
-    // Add your test here.
-    const tx = await program.methods.greet().rpc();
-    console.log('Your transaction signature', tx);
-  });
+  // it('should run the program', async () => {
+  //   // Add your test here.
+  //   const tx = await program.methods.greet().rpc();
+  //   console.log('Your transaction signature', tx);
+  // });
 
   it('intitialize content account', async () => {
 
     await airdrop(provider.connection, authority.publicKey);
 
-    let strName = "name test"
-    
-    const tx = await program.methods.initContentAccount(strName, new BN(100), new BN(100)).accounts(
+    let strName =  (await hashName("name test")).substring(0, 32)
+    console.log(strName,strName.length)
+    const tx = await program.methods.initContentAccount( strName, new BN(360), new BN(1000)).accounts(
       {
         authority: authority.publicKey,
         
@@ -45,21 +45,49 @@ describe('basic', () => {
     contentAccountBump = bump;
 
     let contentAccountInfo = await program.account.contentAccount.fetch(contentAccountKey);
-    
+    console.log(contentAccountInfo)
     expect(contentAccountInfo.authority.toBase58()).toBe(authority.publicKey.toBase58());
-    const utf8ByteArray_name= stringToUtf8ByteArray("name test");
-    const paddedByteArray_name = padByteArrayWithZeroes(utf8ByteArray_name, 250);
+    const utf8ByteArray_name= stringToUtf8ByteArray(strName);
+    
+    const paddedByteArray_name = padByteArrayWithZeroes(utf8ByteArray_name, contentAccountInfo.name.length);
+    console.log(Array.prototype.slice.call(paddedByteArray_name))
     expect(contentAccountInfo.name as number[] ).toEqual(Array.prototype.slice.call(paddedByteArray_name));
   
 
+
     console.log('Your transaction signature', tx);
   });
+
+  it("Cost too low", async () => {
+    let should_fail = "This Should Fail"
+    
+    
+    let strName =  (await hashName("Hers a nother one")).substring(0, 32)
+
+    try {
+      await program.methods.initContentAccount(strName, new BN(100), new BN(10)).accounts(
+        {
+          authority: authority.publicKey,
+        }
+      ).signers([authority]).rpc({commitment: 'confirmed'});
+    } catch (error:any) {
+      console.log(error)
+      // expect(error instanceof anchor.AnchorError).toBe(true);
+        const err = anchor.AnchorError.parse(error.logs);
+        console.log(err?.error.errorCode.code)
+      assert.strictEqual(err?.error.errorCode.code, "CostTooLow");
+      should_fail = "Failed"
+
+    }
+    expect(should_fail).toBe("Failed");
+  })
+
 
   it("initialize content user state", async () => {
 
     await airdrop(provider.connection, user.publicKey);
     
-    let strName = "name test"
+    let strName = (await hashName("name test")).substring(0, 32)
 
     console.log(contentAccountKey.toBase58());
 
@@ -102,7 +130,6 @@ describe('basic', () => {
   })
 
     
-
 
 
 });
